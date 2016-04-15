@@ -58,7 +58,6 @@ public class FaceSpace
 			//Make a unique userID
 			Random rand = new Random();
 			long uID;
-			System.out.println("1");
 			while( true ){
 				uID = (long)rand.nextInt( 100000000 );
 				String isItUnique = "SELECT * FROM Profiles WHERE userID = "+uID;
@@ -68,7 +67,6 @@ public class FaceSpace
 				}
 				else{ break; }
 			}
-			System.out.println("2");
 			prepStatement.setLong(1, uID); 
 			prepStatement.setString(2, fn);
 			prepStatement.setString(3, ln );
@@ -76,12 +74,10 @@ public class FaceSpace
 			prepStatement.setDate(5, birthday);
 			
 			prepStatement.executeUpdate();
-			System.out.println("3");
 			
 			String selectQuery = "SELECT * FROM  Profiles WHERE userID = "+uID;
 	    
 			resultSet = statement.executeQuery(selectQuery); //run the query on the DB table
-			System.out.println("4");
 			while (resultSet.next()) {
 				//the profile was successfully created.
 				return true;
@@ -99,7 +95,7 @@ public class FaceSpace
 	}
 	public long getUserID( String fn, String ln ){
 		try{
-			String selectQuery = "SELECT * FROM  Profiles WHERE  fname="+fn+" and lname="+ln;
+			String selectQuery = "SELECT * FROM  Profiles WHERE  fname = '"+fn+"' and lname = '"+ln+"'";
 			resultSet = statement.executeQuery(selectQuery); 
 			while (resultSet.next()) {
 				return resultSet.getLong(1);
@@ -107,7 +103,7 @@ public class FaceSpace
 			return -1;
 		}
 		catch(SQLException Ex) {
-			System.out.println("Error creating profile.  Machine Error: " + Ex.toString());
+			System.out.println("Error getting users ID.  Machine Error: " + Ex.toString());
 		} 
 		return -1;
 	}
@@ -131,9 +127,7 @@ public class FaceSpace
 			query = "insert into Friendships values (?,?,?,?)";
 			prepStatement = connection.prepareStatement(query);
 			java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
-			//Date today = new Date();
-			//today.setHours(0); today.setMinutes(0); today.setSeconds(0);
-			String date = new java.text.SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date());
+			String date = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
 			java.sql.Date sent = new java.sql.Date( df.parse( date ).getTime() );
 			
 			prepStatement.setLong(1, user1_id); 
@@ -146,7 +140,7 @@ public class FaceSpace
 			
 		}
 		catch(SQLException Ex) {
-			System.out.println("Error creating profile.  Machine Error: " + Ex.toString());
+			System.out.println("Error initiating friendship.  Machine Error: " + Ex.toString());
 		} 
 		catch (ParseException e) {
 			System.out.println("Error parsing the date. Machine Error: " +
@@ -155,7 +149,46 @@ public class FaceSpace
 		
 		return false;
 	}
-	public boolean establishFriendship( String user1, String user2 ){
+	public boolean establishFriendship( long user1, long user2 ){
+		try{
+			//Make sure that the users already have profiles
+			String selectQuery = "SELECT * FROM  Profiles WHERE userID = "+user1;
+			resultSet = statement.executeQuery(selectQuery);
+			if(!resultSet.next()) {
+				System.out.println("user1 does not exist");
+				return false;	//the profile doesn't exits
+			}
+			selectQuery = "SELECT * FROM  Profiles WHERE userID = "+user2;
+			resultSet = statement.executeQuery(selectQuery);
+			if (!resultSet.next()) {
+				System.out.println("user2 does not exist");
+				return false;	//the profile doesn't exits
+			}
+			
+			//make sure that the users are already friends
+			selectQuery = "SELECT * FROM Friendships WHERE "+
+				"(userId1="+user1+" and userId2 = "+user2 +" ) "+
+				"or ( userId1 = "+user2+" and userId2 = "+user1+" )";
+			resultSet = statement.executeQuery(selectQuery);
+			if(!resultSet.next() ){
+				System.out.println("These peeps haven't requested to be friends yet");
+				return false;
+			}
+
+			String updateFriend = "update Friendships set status = 1 where ((userId1 = ? and userId2 = ?) or (userId1 = ? and userId2 = ?))";
+			
+			prepStatement = connection.prepareStatement(updateFriend);
+			prepStatement.setLong(1, user1);
+			prepStatement.setLong(2, user2);
+			prepStatement.setLong(3, user2);
+			prepStatement.setLong(4, user1);
+			
+			prepStatement.executeUpdate();
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error establishing friendship.  Machine Error: " + Ex.toString());
+		}
 		return false;
 	}
 }

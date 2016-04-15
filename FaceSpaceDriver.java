@@ -12,6 +12,7 @@ public class FaceSpaceDriver{
 		long u1 = fs.getUserID("peter","schaldenbrand");
 		long u2 = fs.getUserID("nick","defranco");
 		fs.initiateFriendship( u1, u2 );
+		fs.establishFriendship( u1, u2 );
 		
 	}
 }
