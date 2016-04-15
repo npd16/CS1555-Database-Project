@@ -369,6 +369,46 @@ INSERT INTO Groups VALUES(9,'Fan of Martian Manhunter','We think Martian Manhunt
 INSERT INTO Groups VALUES(10,'Fan of Hawkgirl','We think Hawkgirl is the best superhero!',10);
 --The number of members would use the function COUNT() to get the real totals. 
 --For now just having a set number 
+INSERT INTO GroupMembers VALUES(1,1);
+INSERT INTO GroupMembers VALUES(1,2);
+INSERT INTO GroupMembers VALUES(2,1);
+INSERT INTO GroupMembers VALUES(3,4);
+INSERT INTO GroupMembers VALUES(3,5);
+INSERT INTO GroupMembers VALUES(3,6);
+INSERT INTO GroupMembers VALUES(3,7);
+INSERT INTO GroupMembers VALUES(3,8);
+INSERT INTO GroupMembers VALUES(4,8);
+INSERT INTO GroupMembers VALUES(5,8);
+INSERT INTO GroupMembers VALUES(6,8);
+INSERT INTO GroupMembers VALUES(7,8);
+INSERT INTO GroupMembers VALUES(8,8);
+INSERT INTO GroupMembers VALUES(9,8);
+INSERT INTO GroupMembers VALUES(10,21);
+INSERT INTO GroupMembers VALUES(10,22);
+INSERT INTO GroupMembers VALUES(10,23);
+INSERT INTO GroupMembers VALUES(10,24);
+INSERT INTO GroupMembers VALUES(10,25);
+INSERT INTO GroupMembers VALUES(10,26);
+INSERT INTO GroupMembers VALUES(10,27);
+INSERT INTO GroupMembers VALUES(10,28);
+INSERT INTO GroupMembers VALUES(10,29);
+INSERT INTO GroupMembers VALUES(10,30);
+INSERT INTO GroupMembers VALUES(10,31);
+INSERT INTO GroupMembers VALUES(10,32);
+INSERT INTO GroupMembers VALUES(10,33);
+INSERT INTO GroupMembers VALUES(10,34);
+INSERT INTO GroupMembers VALUES(10,35);
+INSERT INTO GroupMembers VALUES(10,36);
+INSERT INTO GroupMembers VALUES(10,37);
+INSERT INTO GroupMembers VALUES(10,38);
+INSERT INTO GroupMembers VALUES(10,39);
+INSERT INTO GroupMembers VALUES(10,40);
+INSERT INTO GroupMembers VALUES(10,41);
+INSERT INTO GroupMembers VALUES(10,42);
+INSERT INTO GroupMembers VALUES(10,43);
+INSERT INTO GroupMembers VALUES(10,44);
+INSERT INTO GroupMembers VALUES(10,45);
+INSERT INTO GroupMembers VALUES(10,46);
 
 INSERT INTO GroupMembers Values(1,1);
 INSERT INTO GroupMembers Values(1,2);
