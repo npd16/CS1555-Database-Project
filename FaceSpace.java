@@ -23,11 +23,9 @@ public class FaceSpace
 		password = "3771162"; //This is your password in oracle
 	
 		try{
-			System.out.println("Registering DB..");
-			// Register the oracle driver.  
+			System.out.println("Registering DB.."); 
 			DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
-			
-	
+
 			System.out.println("Set url..");
 			//This is the location of the database.  This is the database in oracle
 			//provided to the class
@@ -47,9 +45,7 @@ public class FaceSpace
 	
 	public boolean createUser ( String fn, String ln, String email, String dob ){
 	
-		try{
-			//statement = connection.createStatement(); //create an instance
-			
+		try{	
 			query = "insert into Profiles (userID,fname,lname,email,dob) values (?,?,?,?,?)";
 			prepStatement = connection.prepareStatement(query);
 			java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
@@ -94,6 +90,7 @@ public class FaceSpace
 		return false;
 	}
 	public long getUserID( String fn, String ln ){
+		//return the user's id using their first and last names
 		try{
 			String selectQuery = "SELECT * FROM  Profiles WHERE  fname = '"+fn+"' and lname = '"+ln+"'";
 			resultSet = statement.executeQuery(selectQuery); 
@@ -124,6 +121,7 @@ public class FaceSpace
 				return false;	//the profile doesn't exits
 			}
 			
+			//insert into friendships
 			query = "insert into Friendships values (?,?,?,?)";
 			prepStatement = connection.prepareStatement(query);
 			java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
