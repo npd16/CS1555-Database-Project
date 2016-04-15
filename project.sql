@@ -19,7 +19,7 @@ CREATE TABLE Profiles
 CREATE TABLE Friendships
 (	userId1 number(10),
 	userId2	number(10),
-	status	number(1),
+	status	number(1),	--0 for pending : 1 for full-on friendship
 	date_sent	DATE,
 	CONSTRAINT Friendships_PK PRIMARY KEY (userId1,userId2),
 	CONSTRAINT Friendships_FK_Profiles1 FOREIGN KEY (userId1) REFERENCES Profiles(userID),
