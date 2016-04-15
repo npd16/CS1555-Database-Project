@@ -366,4 +366,5 @@ INSERT INTO Groups VALUES(7,'Fan of Nightwing','We think Nightwing is the best s
 INSERT INTO Groups VALUES(8,'Fan of Green Arrow','We think Green Arrow is the best superhero!',50);
 INSERT INTO Groups VALUES(9,'Fan of Martian Manhunter','We think Martian Manhunter is the best superhero!',50);
 INSERT INTO Groups VALUES(10,'Fan of Hawkgirl','We think Hawkgirl is the best superhero!',50);
-
+--The number of members would use the function COUNT() to get the real totals. 
+--For now just having a set number 
