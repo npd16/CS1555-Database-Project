@@ -24,6 +24,13 @@ public class FaceSpaceDriver{
 			+ "3: Establish a friendship\n"
 			+ "4: Display a user's friends\n"
 			+ "5: Create new group\n"
+			+ "6: Add a user to a group\n"
+			+ "7: Send a message to a user\n"
+			+ "8: Display the messages sent to a user\n"
+			+ "9: Search for a user\n"
+			+ "10: Find a friend\n"
+			+ "11: Top Messengers\n"
+			+ "12: Drop a user\n"
 			+ "0: Runs through all of the functions\n"
 			+ "-1: Exits the system");
 		
@@ -48,6 +55,27 @@ public class FaceSpaceDriver{
 				case 5:
 					function5(fs,in);
 					break;
+				case 6:
+					function6(fs, in);
+					break;
+				case 7:
+					function7(fs,in);
+					break;
+				case 8:
+					function8(fs,in);
+					break;
+				case 9:
+					function9(fs,in);
+					break;
+				case 10:
+					function10(fs,in);
+					break;
+				case 11:
+					function11(fs,in);
+					break;
+				case 12:
+					function12(fs,in);
+					break;					
 				case 0:
 					function0(fs);
 					break;
@@ -135,6 +163,34 @@ public class FaceSpaceDriver{
 		fs.createGroup(gname,desc,limit);
 	}
 	
+	private static void function6(FaceSpace fs, Scanner in){
+		//TODO
+	}
+
+	private static void function7(FaceSpace fs, Scanner in){
+		//TODO
+	}
+	
+	private static void function8(FaceSpace fs, Scanner in){
+		//TODO
+	}
+	
+	private static void function9(FaceSpace fs, Scanner in){
+		//TODO
+	}
+	
+	private static void function10(FaceSpace fs, Scanner in){
+		//TODO
+	}
+
+	private static void function11(FaceSpace fs, Scanner in){
+		//TODO
+	}
+	
+	private static void function12(FaceSpace fs, Scanner in){
+		//TODO
+	}
+	
 	private static void function0(FaceSpace fs){
 		//Test createUser
 		System.out.println("Creating Users");
@@ -159,6 +215,5 @@ public class FaceSpaceDriver{
 		System.out.println("Creating Group");
 		fs.createGroup("Fan of Green Lantern","We think Green Lantern is the best superhero!",1000);
 	}
-	
 
 }
