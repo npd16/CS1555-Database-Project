@@ -357,18 +357,17 @@ INSERT INTO Friendships VALUES(36,32,1,TO_DATE('2016-02-17', 'YYYY-MM-DD'));
 INSERT INTO Friendships VALUES(36,73,1,TO_DATE('2016-02-17', 'YYYY-MM-DD'));
 INSERT INTO Friendships VALUES(73,36,1,TO_DATE('2016-02-17', 'YYYY-MM-DD'));
 
-INSERT INTO Groups VALUES(1,'Fan of Superman','We think Superman is the best superhero!',10);
-INSERT INTO Groups VALUES(2,'Fan of Batman','We think Batman is the best superhero!',10);
-INSERT INTO Groups VALUES(3,'Fan of Wonder Woman','We think Wonder Woman is the best superhero!',10);
-INSERT INTO Groups VALUES(4,'Fan of Flash','We think Flash is the best superhero!',10);
-INSERT INTO Groups VALUES(5,'Fan of Aquaman','We think Aquaman is the best superhero!',10);
-INSERT INTO Groups VALUES(6,'Fan of Cyborg','We think Cyborg is the best superhero!',10);
-INSERT INTO Groups VALUES(7,'Fan of Nightwing','We think Nightwing is the best superhero!',10);
-INSERT INTO Groups VALUES(8,'Fan of Green Arrow','We think Green Arrow is the best superhero!',10);
-INSERT INTO Groups VALUES(9,'Fan of Martian Manhunter','We think Martian Manhunter is the best superhero!',10);
-INSERT INTO Groups VALUES(10,'Fan of Hawkgirl','We think Hawkgirl is the best superhero!',10);
---The number of members would use the function COUNT() to get the real totals. 
---For now just having a set number 
+INSERT INTO Groups VALUES(1,'Fan of Superman','We think Superman is the best superhero!',1000);
+INSERT INTO Groups VALUES(2,'Fan of Batman','We think Batman is the best superhero!',1000);
+INSERT INTO Groups VALUES(3,'Fan of Wonder Woman','We think Wonder Woman is the best superhero!',1000);
+INSERT INTO Groups VALUES(4,'Fan of Flash','We think Flash is the best superhero!',1000);
+INSERT INTO Groups VALUES(5,'Fan of Aquaman','We think Aquaman is the best superhero!',1000);
+INSERT INTO Groups VALUES(6,'Fan of Cyborg','We think Cyborg is the best superhero!',1000);
+INSERT INTO Groups VALUES(7,'Fan of Nightwing','We think Nightwing is the best superhero!',1000);
+INSERT INTO Groups VALUES(8,'Fan of Green Arrow','We think Green Arrow is the best superhero!',1000);
+INSERT INTO Groups VALUES(9,'Fan of Martian Manhunter','We think Martian Manhunter is the best superhero!',1000);
+INSERT INTO Groups VALUES(10,'Fan of Hawkgirl','We think Hawkgirl is the best superhero!',1000);
+
 INSERT INTO GroupMembers Values(1,1);
 INSERT INTO GroupMembers Values(1,2);
 INSERT INTO GroupMembers Values(1,3);
