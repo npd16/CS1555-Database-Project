@@ -36,7 +36,7 @@ public class FaceSpace
 			//create a connection to DB on class3.cs.pitt.edu
 			connection = DriverManager.getConnection(url, username, password); 
 			
-			statement = connection.createStatement();
+			statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 		}
 		catch(Exception Ex)  {
 			System.out.println("Error connecting to database.  Machine Error: " +
@@ -230,6 +230,7 @@ public class FaceSpace
 				System.out.println("This user doesn't have any friends");
 				return false;
 			}
+			resultSet.first();
 			
 			System.out.println("Displaying " + fname + " " + lname + "'s friends");
 			String user2FName = "";
@@ -237,8 +238,7 @@ public class FaceSpace
 			long user2Id = 0;
 			int user2Status = -1;
 			String status, output;
-			while(resultSet.next()){
-				resultSet.previous();
+			do {
 				user2Id = resultSet.getLong(1);
 				user2FName = resultSet.getString(2);
 				user2LName = resultSet.getString(3);
@@ -253,8 +253,8 @@ public class FaceSpace
 				output = user2FName + " " + user2LName +"\tUser ID: " + user2Id + "\tStatus: " + status;
 				
 				System.out.println(output);
-				resultSet.next();
 			}
+			while(resultSet.next());
 			return true;
 		}
 		catch(SQLException Ex) {

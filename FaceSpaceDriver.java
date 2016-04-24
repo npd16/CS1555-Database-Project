@@ -106,7 +106,7 @@ public class FaceSpaceDriver{
 		
 		long u1 = fs.getUserID(fname1,lname1);
 		long u2 = fs.getUserID(fname2,lname2);
-		fs.initiateFriendship(u1, u2);
+		fs.establishFriendship(u1, u2);
 	}
 
 	private static void function4(FaceSpace fs, Scanner in){
