@@ -303,4 +303,46 @@ public class FaceSpace
 		} 
 		return false;
 	}
+	
+	public boolean searchForUser (String search){
+		try{
+			//Spilt the search terms
+			String[] terms = search.split(" ");
+			long userId = 0;
+			String userFName = "";
+			String userLName = "";
+			String userEmail = "";
+			String output;
+			
+			for(int i = 0; i < terms.length; i++){
+				System.out.println("");
+				String selectQuery = "SELECT userId,fname,lname,email FROM Profiles WHERE (fname LIKE \'%" + terms[i] + "%\' OR lname LIKE \'%" + terms[i] + "%\'OR email LIKE \'%" + terms[i] + "%\')";
+				resultSet = statement.executeQuery(selectQuery);
+				if(!resultSet.next() ){
+					System.out.println("The term(s) are no where to be found");
+					continue;
+				}
+				resultSet.first();
+				System.out.println("Displaying results for the term " + terms[i]);
+				
+				do {
+					userId = resultSet.getLong(1);
+					userFName = resultSet.getString(2);
+					userLName = resultSet.getString(3);
+					userEmail = resultSet.getString(4);
+				
+					output = userFName + " " + userLName +"\tUser ID: " + userId + "\tEmail: " + userEmail;
+				
+					System.out.println(output+"\n");
+					
+				}
+				while(resultSet.next());
+			}
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error displaying friendships.  Machine Error: " + Ex.toString());
+		}
+		return false;
+	}
 }

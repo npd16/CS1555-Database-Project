@@ -176,7 +176,12 @@ public class FaceSpaceDriver{
 	}
 	
 	private static void function9(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Searching for a user");
+		System.out.println("Please enter a user's first name or last name or email to search for");
+		String search = in.nextLine();
+		search = in.nextLine();
+		
+		fs.searchForUser(search);
 	}
 	
 	private static void function10(FaceSpace fs, Scanner in){
