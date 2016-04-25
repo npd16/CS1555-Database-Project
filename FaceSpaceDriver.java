@@ -164,15 +164,55 @@ public class FaceSpaceDriver{
 	}
 	
 	private static void function6(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Adding new member to Group");
+		System.out.println("Please enter the group name:");
+		String gname = in.nextLine();
+		gname = in.nextLine();
+		long gid = fs.getGroupID( gname );
+		
+		System.out.println("Please enter the user's first name");
+		String fname = in.nextLine();
+		System.out.println("Please enter the user's last name");
+		String lname = in.nextLine();
+		
+		long uid = fs.getUserID(fname,lname);
+		
+		fs.addToGroup( uid, gid );
 	}
 
 	private static void function7(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Sending a message.");
+		System.out.println("Please enter the sender's first name");
+		String sfname = in.nextLine();
+		sfname = in.nextLine();
+		System.out.println("Please enter the sender's last name");
+		String slname = in.nextLine();
+		System.out.println("Please enter the recipient's first name");
+		String rfname = in.nextLine();
+		System.out.println("Please enter the recipient's last name");
+		String rlname = in.nextLine();
+		
+		long sendID = fs.getUserID( sfname, slname );
+		long recID = fs.getUserID( rfname, slname );
+		
+		System.out.println("Please enter the message's subject:");
+		String subject = in.nextLine();
+		System.out.println("Please enter the message's body:");
+		String body = in.nextLine();
+		
+		fs.sendMessageToUser( subject, body, recID, sendID );
 	}
 	
 	private static void function8(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Displaying Messages.");
+		System.out.println("Please enter the user's first name");
+		String fname = in.nextLine();
+		fname = in.nextLine();
+		System.out.println("Please enter the user's last name");
+		String lname = in.nextLine();
+		long userID = fs.getUserID( fname, lname );
+		
+		fs.displayMessages( userID );
 	}
 	
 	private static void function9(FaceSpace fs, Scanner in){

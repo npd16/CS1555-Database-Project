@@ -304,6 +304,125 @@ public class FaceSpace
 		return false;
 	}
 	
+	public long getGroupID( String gname ){
+		try{
+			String selectQuery = "SELECT groupId FROM  Groups WHERE  gname = "+gname;
+			resultSet = statement.executeQuery(selectQuery); 
+			while (resultSet.next()) {
+				return resultSet.getLong(1);
+			}
+			return -1;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error getting users ID.  Machine Error: " + Ex.toString());
+		} 
+		return -1;
+	}
+	
+	public boolean addToGroup ( long userID, long groupID ){
+		try{
+			//check to see if the group member limit is not reached
+			query = "select members from Groups where groupID = "+groupID;
+			resultSet = statement.executeQuery( query );
+			resultSet.next();
+			long member_count = resultSet.getLong(1);
+			if( member_count >= 1000 ){
+				//group is at capacity
+				return false;
+			}
+			
+			//add new member to group table
+			query = "update Groups set members = ? where groupId = ?";
+			prepStatement = connection.prepareStatement(query);
+			prepStatement.setLong(1, member_count + 1);
+			prepStatement.setLong(2, groupID);
+			prepStatement.executeUpdate();
+			
+			//add new row in groupmembers table
+			query = "insert into GroupMembers values( ?, ? )";
+			prepStatement = connection.prepareStatement(query);
+			prepStatement.setLong(1, groupID);
+			prepStatement.setLong(2, userID);
+			prepStatement.executeUpdate();
+			
+			return true;
+		}
+		catch(SQLException Ex){
+			System.out.println("Error adding to group.  Machine Error: "+Ex.toString());
+		}
+		return false;
+	}
+	
+	public boolean sendMessageToUser( String sub, String body, long recipient, long sender){
+		try{	
+			query = "insert into Messages values (?,?,?,?,?,?)";
+			prepStatement = connection.prepareStatement(query);
+			
+			//Make a unique message
+			Random rand = new Random();
+			long id;
+			while( true ){
+				id = (long)rand.nextInt( 100000000 );
+				String isItUnique = "SELECT * FROM Messages WHERE msgId = " + id;
+				resultSet = statement.executeQuery( isItUnique );
+				if( resultSet.next() ){
+					continue;
+				}
+				else{ break; }
+			}
+			prepStatement.setLong(1, id); 
+			prepStatement.setLong(2, sender);
+			prepStatement.setLong(3, recipient );
+			prepStatement.setString(4, sub);
+			prepStatement.setString(5, body);
+			java.util.Date today = new java.util.Date();
+			java.sql.Timestamp t = new java.sql.Timestamp(today.getTime());
+			prepStatement.setTimestamp(6, t );
+			
+			prepStatement.executeUpdate();
+			
+			return true;
+		}
+		catch(SQLException Ex){
+			System.out.println("Error sending a message to a user.  Machine Error: "+Ex.toString());
+		}
+		return false;
+	}
+	
+	public boolean displayMessages( long userID ){
+		try{
+			String selectQuery = "SELECT * FROM  Messages WHERE  receiver = "+userID;
+			resultSet = statement.executeQuery(selectQuery); 
+			while (resultSet.next()) {
+				long sender = resultSet.getLong(2);
+				String subject = resultSet.getString(4);
+				String body = resultSet.getString(5);
+				java.sql.Timestamp t = resultSet.getTimestamp(6);
+				
+				//get the sender's full name
+				selectQuery = "SELECT * FROM Profiles WHERE userID = "+sender;
+				ResultSet rs1 = statement.executeQuery( selectQuery );
+				String name = "";
+				while( rs1.next() ){
+					name = name + rs1.getString(2);
+					name = name +" "+ rs1.getString(3);
+				}
+				
+				//output the message to the standard out
+				System.out.println(name+" sent:");
+				System.out.println("Subject: "+subject);
+				System.out.println("Body: " + body);
+				System.out.println("On: "+t.toString());
+				System.out.println("");
+			}
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error getting users ID.  Machine Error: " + Ex.toString());
+		} 
+		return false;
+	}
+	
 	public boolean searchForUser (String search){
 		try{
 			//Spilt the search terms
