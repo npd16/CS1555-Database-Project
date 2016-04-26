@@ -174,7 +174,6 @@ public class FaceSpaceDriver{
 		String fname = in.nextLine();
 		System.out.println("Please enter the user's last name");
 		String lname = in.nextLine();
-		
 		long uid = fs.getUserID(fname,lname);
 		
 		fs.addToGroup( uid, gid );
@@ -210,6 +209,7 @@ public class FaceSpaceDriver{
 		fname = in.nextLine();
 		System.out.println("Please enter the user's last name");
 		String lname = in.nextLine();
+		System.out.println(fname+"  "+lname);
 		long userID = fs.getUserID( fname, lname );
 		
 		fs.displayMessages( userID );

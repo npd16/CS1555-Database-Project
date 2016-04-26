@@ -306,15 +306,16 @@ public class FaceSpace
 	
 	public long getGroupID( String gname ){
 		try{
-			String selectQuery = "SELECT groupId FROM  Groups WHERE  gname = "+gname;
+			String selectQuery = "SELECT * FROM  Groups WHERE  gname = '"+gname+"'";
 			resultSet = statement.executeQuery(selectQuery); 
-			while (resultSet.next()) {
+			while(resultSet.next()) {
 				return resultSet.getLong(1);
 			}
+			System.out.println("groupID not found");
 			return -1;
 		}
 		catch(SQLException Ex) {
-			System.out.println("Error getting users ID.  Machine Error: " + Ex.toString());
+			System.out.println("Error getting group ID.  Machine Error: " + Ex.toString());
 		} 
 		return -1;
 	}
@@ -322,12 +323,13 @@ public class FaceSpace
 	public boolean addToGroup ( long userID, long groupID ){
 		try{
 			//check to see if the group member limit is not reached
-			query = "select members from Groups where groupID = "+groupID;
+			query = "select * from Groups where groupID = "+groupID;
 			resultSet = statement.executeQuery( query );
-			resultSet.next();
-			long member_count = resultSet.getLong(1);
+			if( !resultSet.next() ){
+				return false;
+			}
+			long member_count = resultSet.getLong(4);
 			if( member_count >= 1000 ){
-				//group is at capacity
 				return false;
 			}
 			
@@ -337,6 +339,7 @@ public class FaceSpace
 			prepStatement.setLong(1, member_count + 1);
 			prepStatement.setLong(2, groupID);
 			prepStatement.executeUpdate();
+			//System.out.println("updataed");
 			
 			//add new row in groupmembers table
 			query = "insert into GroupMembers values( ?, ? )";
@@ -345,6 +348,7 @@ public class FaceSpace
 			prepStatement.setLong(2, userID);
 			prepStatement.executeUpdate();
 			
+			//System.out.println("inserted");
 			return true;
 		}
 		catch(SQLException Ex){
@@ -418,7 +422,7 @@ public class FaceSpace
 			return true;
 		}
 		catch(SQLException Ex) {
-			System.out.println("Error getting users ID.  Machine Error: " + Ex.toString());
+			System.out.println("Error getting displaying message.  Machine Error: " + Ex.toString());
 		} 
 		return false;
 	}
