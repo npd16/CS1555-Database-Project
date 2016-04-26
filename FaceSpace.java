@@ -266,7 +266,7 @@ public class FaceSpace
 	public boolean createGroup (String gname, String description, int limit){
 	
 		try{	
-			query = "insert into Groups (groupId,gname,description,members) values (?,?,?,?)";
+			query = "insert into Groups (groupId,gname,description,members,memlimit) values (?,?,?,?,?)";
 			prepStatement = connection.prepareStatement(query);
 			
 			//Make a unique userID
@@ -284,7 +284,8 @@ public class FaceSpace
 			prepStatement.setLong(1, id); 
 			prepStatement.setString(2, gname);
 			prepStatement.setString(3, description );
-			prepStatement.setInt(4, limit);
+			prepStatement.setInt(4, 0);
+			prepStatement.setInt(5, limit);
 			
 			prepStatement.executeUpdate();
 			
@@ -305,11 +306,14 @@ public class FaceSpace
 	}
 	
 	public long getGroupID( String gname ){
+		long result = -1;
 		try{
-			String selectQuery = "SELECT * FROM  Groups WHERE  gname = '"+gname+"'";
-			resultSet = statement.executeQuery(selectQuery); 
+			String selectQuery = "SELECT groupId FROM  Groups WHERE  gname = '"+gname+"'";
+			resultSet = statement.executeQuery(selectQuery);
+						
 			while(resultSet.next()) {
-				return resultSet.getLong(1);
+				result = resultSet.getLong(1);
+				return result;
 			}
 			System.out.println("groupID not found");
 			return -1;
@@ -323,13 +327,15 @@ public class FaceSpace
 	public boolean addToGroup ( long userID, long groupID ){
 		try{
 			//check to see if the group member limit is not reached
-			query = "select * from Groups where groupID = "+groupID;
+			query = "select members,memlimit from Groups where groupID = "+groupID;
 			resultSet = statement.executeQuery( query );
 			if( !resultSet.next() ){
 				return false;
 			}
-			long member_count = resultSet.getLong(4);
-			if( member_count >= 1000 ){
+			long member_count = resultSet.getLong(1);
+			int member_limit = resultSet.getInt(2);
+			if( member_count > member_limit ){
+				System.out.println("The Group Limit has been reached.");
 				return false;
 			}
 			
@@ -347,8 +353,8 @@ public class FaceSpace
 			prepStatement.setLong(1, groupID);
 			prepStatement.setLong(2, userID);
 			prepStatement.executeUpdate();
+			System.out.println("The user has been added to the group.");
 			
-			//System.out.println("inserted");
 			return true;
 		}
 		catch(SQLException Ex){
@@ -384,6 +390,7 @@ public class FaceSpace
 			prepStatement.setTimestamp(6, t );
 			
 			prepStatement.executeUpdate();
+			System.out.println("Your message has been sent");
 			
 			return true;
 		}
@@ -395,31 +402,27 @@ public class FaceSpace
 	
 	public boolean displayMessages( long userID ){
 		try{
-			String selectQuery = "SELECT * FROM  Messages WHERE  receiver = "+userID;
+			String selectQuery = "select sender,subject,body,sent_date,fname,lname from messages left join (select userId,fname,lname from profiles)p on messages.receiver = p.userId WHere receiver=" + userID;
 			resultSet = statement.executeQuery(selectQuery); 
-			while (resultSet.next()) {
-				long sender = resultSet.getLong(2);
-				String subject = resultSet.getString(4);
-				String body = resultSet.getString(5);
-				java.sql.Timestamp t = resultSet.getTimestamp(6);
-				
-				//get the sender's full name
-				selectQuery = "SELECT * FROM Profiles WHERE userID = "+sender;
-				ResultSet rs1 = statement.executeQuery( selectQuery );
-				String name = "";
-				while( rs1.next() ){
-					name = name + rs1.getString(2);
-					name = name +" "+ rs1.getString(3);
+			if(resultSet.next()){
+				resultSet.previous();
+				while (resultSet.next()) {
+					String subject = resultSet.getString(2);
+					String body = resultSet.getString(3);
+					java.sql.Timestamp t = resultSet.getTimestamp(4);
+					String fname = resultSet.getString(5);
+					String lname = resultSet.getString(6);
+					String name = fname + " " + lname;
+					
+					//output the message to the standard out
+					System.out.println("\n"+name+" sent:");
+					System.out.println("Subject: "+subject);
+					System.out.println("Body: " + body);
+					System.out.println("On: "+t.toString());
 				}
-				
-				//output the message to the standard out
-				System.out.println(name+" sent:");
-				System.out.println("Subject: "+subject);
-				System.out.println("Body: " + body);
-				System.out.println("On: "+t.toString());
-				System.out.println("");
+				return true;
 			}
-			return true;
+			System.out.println("No messages sent to this user");
 		}
 		catch(SQLException Ex) {
 			System.out.println("Error getting displaying message.  Machine Error: " + Ex.toString());
@@ -442,7 +445,7 @@ public class FaceSpace
 				String selectQuery = "SELECT userId,fname,lname,email FROM Profiles WHERE (fname LIKE \'%" + terms[i] + "%\' OR lname LIKE \'%" + terms[i] + "%\'OR email LIKE \'%" + terms[i] + "%\')";
 				resultSet = statement.executeQuery(selectQuery);
 				if(!resultSet.next() ){
-					System.out.println("The term(s) are no where to be found");
+					System.out.println("The term '"+terms[i]+"' is no where to be found");
 					continue;
 				}
 				resultSet.first();
@@ -464,7 +467,7 @@ public class FaceSpace
 			return true;
 		}
 		catch(SQLException Ex) {
-			System.out.println("Error displaying friendships.  Machine Error: " + Ex.toString());
+			System.out.println("Error displaying search results.  Machine Error: " + Ex.toString());
 		}
 		return false;
 	}

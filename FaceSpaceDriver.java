@@ -170,13 +170,15 @@ public class FaceSpaceDriver{
 		gname = in.nextLine();
 		long gid = fs.getGroupID( gname );
 		
-		System.out.println("Please enter the user's first name");
-		String fname = in.nextLine();
-		System.out.println("Please enter the user's last name");
-		String lname = in.nextLine();
-		long uid = fs.getUserID(fname,lname);
-		
-		fs.addToGroup( uid, gid );
+		if(gid != -1){
+			System.out.println("Please enter the user's first name");
+			String fname = in.nextLine();
+			System.out.println("Please enter the user's last name");
+			String lname = in.nextLine();
+			long uid = fs.getUserID(fname,lname);
+			
+			fs.addToGroup( uid, gid );
+		}
 	}
 
 	private static void function7(FaceSpace fs, Scanner in){
@@ -192,14 +194,17 @@ public class FaceSpaceDriver{
 		String rlname = in.nextLine();
 		
 		long sendID = fs.getUserID( sfname, slname );
-		long recID = fs.getUserID( rfname, slname );
+		long recID = fs.getUserID( rfname, rlname );
 		
-		System.out.println("Please enter the message's subject:");
-		String subject = in.nextLine();
-		System.out.println("Please enter the message's body:");
-		String body = in.nextLine();
+		if(sendID != -1 && recID != -1){
 		
-		fs.sendMessageToUser( subject, body, recID, sendID );
+			System.out.println("Please enter the message's subject:");
+			String subject = in.nextLine();
+			System.out.println("Please enter the message's body:");
+			String body = in.nextLine();
+		
+			fs.sendMessageToUser( subject, body, recID, sendID );
+		}
 	}
 	
 	private static void function8(FaceSpace fs, Scanner in){
@@ -212,7 +217,9 @@ public class FaceSpaceDriver{
 		System.out.println(fname+"  "+lname);
 		long userID = fs.getUserID( fname, lname );
 		
-		fs.displayMessages( userID );
+		if(userID != -1){
+			fs.displayMessages( userID );
+		}
 	}
 	
 	private static void function9(FaceSpace fs, Scanner in){
@@ -238,27 +245,48 @@ public class FaceSpaceDriver{
 	
 	private static void function0(FaceSpace fs){
 		//Test createUser
-		System.out.println("Creating Users");
+		System.out.println("\nCreating Users");
 		fs.createUser( "Peter","Schaldenbrand","pls21@pitt.edu","1995-07-16");
 		fs.createUser( "Nick","DeFranco","npd16@pitt.edu","1994-06-14");
 		
 		//Test initiateFriendship
-		System.out.println("Initiating Friendships");
+		System.out.println("\nInitiating Friendships");
 		long u1 = fs.getUserID("Peter","Schaldenbrand");
 		long u2 = fs.getUserID("Nick","DeFranco");
 		fs.initiateFriendship( u1, u2 );
 		
 		//Test establishFriendship
-		System.out.println("Establishing Friendships");
+		System.out.println("\nEstablishing Friendships");
 		fs.establishFriendship( u1, u2 );
 		
 		//Test displayFriends
-		System.out.println("Displaying Friends");
+		System.out.println("\nDisplaying Friends");
 		fs.displayFriends("Nick", "DeFranco");
 		
 		//Test createGroup
-		System.out.println("Creating Group");
+		System.out.println("\nCreating Group");
 		fs.createGroup("Fan of Green Lantern","We think Green Lantern is the best superhero!",1000);
+		
+		//Test addToGroup
+		System.out.println("\nAdding to a group");
+		long gId = fs.getGroupID("Fan of Green Lantern");
+		fs.addToGroup(u1, gId);
+		fs.addToGroup(u2, gId);
+		
+		//Test sendMessageToUser
+		System.out.println("\nSend a message to a user");
+		fs.sendMessageToUser("ASADU", "This message came from the driver function that tests all of the functions",
+				u1, u2);
+		
+		//Test displayMessages
+		System.out.println("\nDisplaying messages to Peter");
+		fs.displayMessages(u1);
+		
+		//Test searchForUser
+		System.out.println("\nSearching for npd, chald, hello.");
+		System.out.println("npd is in Nick DeFranco's email, chald is part of Schaldenbrand, hello is not found any where");
+		fs.searchForUser("npd chald hello");
+		
 	}
 
 }
