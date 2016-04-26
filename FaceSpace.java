@@ -468,4 +468,84 @@ public class FaceSpace
 		}
 		return false;
 	}
+	
+	//Function 10
+	private ArrayList<Long> friendArray( long userID ){
+		//return an arraylist of the userID's of a user's friends
+		ArrayList<Long> ret = new ArrayList<Long>();
+		try{
+			String selectQuery = "SELECT * FROM Friendships WHERE "+
+				"(userId1="+userID+" or userId2="+userID+")";
+			resultSet = statement.executeQuery(selectQuery);
+			while( resultSet.next() ){
+				long u1 = resultSet.getLong(1);
+				long u2 = resultSet.getLong(2);
+				if( u1 != userID ){
+					ret.add( new Long( u1 ) );
+				}
+				else{
+					ret.add(new Long( u2 ) );
+				}
+			}
+			return ret;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error creating an array of friends of a user.  Machine Error: " + Ex.toString());
+		}
+		return ret;
+	}
+	public boolean threeDegrees( long userA, long userB ){
+		ArrayList<Long> friendAr1 = friendArray( userA );
+		for( int i = 0; i < friendAr1.size(); i++ ){
+			long friend1 = friendAr1.get( i ).longValue();
+			if( friend1 == userB ){
+				printPath(userA,friend1,-1,-1);
+				return true;
+			}
+			ArrayList<Long> friendAr2 = friendArray( friend1 );
+			for( int j = 0; j < friendAr2.size(); j++ ){
+				long friend2 = friendAr2.get(j).longValue();
+				if( friend2 == userB ){
+					printPath(userA,friend1,friend2,-1);
+					return true;
+				}
+				ArrayList<Long> friendAr3 = friendArray( friend2 );
+				for( int k = 0; k < friendAr3.size(); k++ ){
+					long friend3 = friendAr3.get(k).longValue();
+					if( friend3 == userB ){
+						printPath(userA,friend1,friend2,friend3);
+						return true;
+					}
+				}
+				//end third degree
+			}
+			//end second degree
+		}
+		//end first degree
+		System.out.println("No path of three degrees or less between the users could be found.");
+		return false;
+	}
+	
+	private void printPath( long f1, long f2, long f3, long f4 ){
+		//helper function for threeDegrees. it prints the path using user's names
+		try{
+			System.out.println("The full path is:");
+			long [] ar = {f1,f2,f3,f4};
+			for( int i = 0; i < ar.length; i++ ){
+				if( ar[i] < 0 ){
+					continue;
+				}
+				String selectQuery = "SELECT * FROM Profiles WHERE userID="+ar[i];
+				resultSet = statement.executeQuery(selectQuery);
+				if( resultSet.next() ){
+					String fName = resultSet.getString(2);
+					String lName = resultSet.getString(3);
+					System.out.println(fName+" "+lName);
+				}
+			}
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error printing the friendship path.  Machine Error: " + Ex.toString());
+		}
+	}
 }
