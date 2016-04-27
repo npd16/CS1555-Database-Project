@@ -548,4 +548,84 @@ public class FaceSpace
 			System.out.println("Error printing the friendship path.  Machine Error: " + Ex.toString());
 		}
 	}
+	
+	//function 11
+	public boolean dropUser( long userID ){
+		try{
+			//decrement the member count in each group the user was part of
+			String selectQuery = "SELECT * FROM GroupMembers WHERE userID="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> groups = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long gID = resultSet.getLong(1);
+				groups.add( new Long( gID ) );
+			}
+			for( int i = 0; i < groups.size(); i++ ){
+				selectQuery = "SELECT * FROM Groups WHERE groupId="+groups.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				long membersCount = 0;
+				if( resultSet.next() ){
+					membersCount = resultSet.getLong(4);
+				}
+				membersCount--;
+				query = "UPDATE Groups SET members = ? WHERE Groups.groupID = ? ";
+				prepStatement = connection.prepareStatement(query);
+				prepStatement.setLong(1, membersCount); 
+				prepStatement.setLong(2, groups.get(i));
+				prepStatement.executeUpdate();
+			}
+			//Delete the user
+			query = "DELETE FROM Profiles WHERE Profiles.userID=?";
+			prepStatement = connection.prepareStatement(query);
+			prepStatement.setLong(1, userID); 
+			prepStatement.executeUpdate();
+			
+			//Delete the user's message if both the sender and receiver are deleted.
+			//first case: user is receiver
+			selectQuery = "SELECT * FROM Messages WHERE receiver="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> senders = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long sID = resultSet.getLong(1);
+				senders.add( new Long( sID ) );
+			}
+			for( int i = 0; i < senders.size(); i++ ){
+				selectQuery = "SELECT * FROM Profiles WHERE userID="+senders.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				if( !resultSet.next() ){
+					//The message must be delete: no sender or receiver(user)
+					query = "DELETE FROM Messages WHERE sender = ? and receiver = ?";
+					prepStatement = connection.prepareStatement(query);
+					prepStatement.setLong(1,senders.get(i));
+					prepStatement.setLong(2,userID);
+					prepStatement.executeUpdate();
+				}
+			}
+			//second case: the user is the sender
+			selectQuery = "SELECT * FROM Messages WHERE sender="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> receivers = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long rID = resultSet.getLong(1);
+				receivers.add( new Long( rID ) );
+			}
+			for( int i = 0; i < receivers.size(); i++ ){
+				selectQuery = "SELECT * FROM Profiles WHERE userID="+receivers.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				if( !resultSet.next() ){
+					//The message must be delete: no sender(user) or receiver
+					query = "DELETE FROM Messages WHERE sender = ? and receiver = ?";
+					prepStatement = connection.prepareStatement(query);
+					prepStatement.setLong(1,userID);
+					prepStatement.setLong(2,receivers.get(i));
+					prepStatement.executeUpdate();
+				}
+			}
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error printing the friendship path.  Machine Error: " + Ex.toString());
+		}
+		return false;
+	}
 }

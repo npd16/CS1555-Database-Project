@@ -55,6 +55,28 @@ CREATE TABLE Messages
 	CONSTRAINT Messages_FK_ProfilesR FOREIGN KEY (receiver) REFERENCES Profiles(userID)
 );
 
+CREATE OR REPLACE TRIGGER remove_from_group
+AFTER DELETE ON Profiles
+FOR EACH ROW
+BEGIN
+	--UPDATE Groups
+	--SET Groups.members = (Groups.members - 1)
+	--WHERE Groups.groupId in (	SELECT * FROM GroupMembers WHERE GroupMembers.userID = :old.userID);
+	DELETE FROM GroupMembers
+	WHERE GroupMembers.userID = :old.userID;
+END;
+/
+
+CREATE OR REPLACE TRIGGER end_friendship
+AFTER DELETE ON Profiles
+FOR EACH ROW
+BEGIN
+	DELETE FROM Friendships
+	WHERE ((Friendships.userID1 = :old.userID) or 
+			(Friendships.userID2 = :old.userID));
+END;
+/
+
 INSERT INTO Profiles VALUES(1, 'Ada', 'Lovelace', 'ada1@gmail.com', TO_DATE('1990-01-03','YYYY-MM-DD'),  TIMESTAMP '2016-03-29 14:24:51');
 INSERT INTO Profiles VALUES(2, 'Na', 'Li','na2@gmail.com', TO_DATE('1993-08-21','YYYY-MM-DD'), TIMESTAMP '2016-04-13 05:21:02');
 INSERT INTO Profiles VALUES(3, 'Francis', 'Lefebvre', 'francis3@gmail.com', TO_DATE('1994-09-01','YYYY-MM-DD'), TIMESTAMP '2015-12-26 01:51:28'); 
@@ -769,3 +791,4 @@ INSERT INTO Messages VALUES(297, 13, 89, 'mipfmgmlrrrfukagnvpxacmkr' , 'coxrmhuw
 INSERT INTO Messages VALUES(298, 22, 28, 'iwowejgesbxtfihgrtjjpkt' , 'vlqtiropjsokbpmgsecpupfqjfdxoqidonmw' , TIMESTAMP '2016-02-01 13:43:45');
 INSERT INTO Messages VALUES(299, 48, 58, 'fgknutkrucwwrvibdujwisiojuh' , 'oqtsgsoqibcrhidlfikbpckmbdbsobfvvsahtljrswattvwfnkhujrnrrfclvxjnkgksqqie' , TIMESTAMP '2015-05-02 13:34:11');
 INSERT INTO Messages VALUES(300, 28, 60, 'dpnmwkweaemdrr' , 'aggakaeqvignfcpgxtvpqbtlmvsnapwtmphaqtguhcilrlxxkttcijxmkqavdbrpwb' , TIMESTAMP '2016-07-08 16:13:16');
+

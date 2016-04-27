@@ -242,7 +242,16 @@ public class FaceSpaceDriver{
 	}
 
 	private static void function11(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Dropping user.");
+		System.out.println("Please enter the user's first name");
+		String fname = in.nextLine();
+		fname = in.nextLine();
+		System.out.println("Please enter the user's last name");
+		String lname = in.nextLine();
+		
+		long u = fs.getUserID(fname,lname);
+		
+		fs.dropUser( u );
 	}
 	
 	private static void function12(FaceSpace fs, Scanner in){
