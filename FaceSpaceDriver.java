@@ -232,7 +232,20 @@ public class FaceSpaceDriver{
 	}
 	
 	private static void function10(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Determining path between users");
+		System.out.println("Please enter the first user's first name");
+		String fname1 = in.nextLine();
+		fname1 = in.nextLine();
+		System.out.println("Please enter the first user's last name");
+		String lname1 = in.nextLine();
+		System.out.println("Please enter the second user's first name");
+		String fname2 = in.nextLine();
+		System.out.println("Please enter the second user's last name");
+		String lname2 = in.nextLine();
+		
+		long u1 = fs.getUserID(fname1,lname1);
+		long u2 = fs.getUserID(fname2,lname2);
+		fs.threeDegrees(u1, u2);
 	}
 
 	private static void function11(FaceSpace fs, Scanner in){
@@ -240,7 +253,16 @@ public class FaceSpaceDriver{
 	}
 	
 	private static void function12(FaceSpace fs, Scanner in){
-		//TODO
+		System.out.println("Dropping user.");
+		System.out.println("Please enter the user's first name");
+		String fname = in.nextLine();
+		fname = in.nextLine();
+		System.out.println("Please enter the user's last name");
+		String lname = in.nextLine();
+		
+		long u = fs.getUserID(fname,lname);
+		
+		fs.dropUser( u );
 	}
 	
 	private static void function0(FaceSpace fs){

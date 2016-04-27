@@ -496,8 +496,8 @@ public class FaceSpace
 								   			+ "select sender,count(sender) as c_sender "
 								   			+ "from messages "
 								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
-								   			+ "group by sender "
-								   		+ ")t1 join ( "
+								   			+ "group by sender ";
+				String selectQuery2  = ")t1 join ( "
 								   			+ "select receiver,count(receiver) as c_receiver "
 								   			+ "from messages "
 								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
@@ -509,7 +509,7 @@ public class FaceSpace
 								   	+ "on t.userID = profiles.userid "
 								   	+ "where rownum <= " + num;
 			
-				resultSet = statement.executeQuery(selectQuery);
+				resultSet = statement.executeQuery(selectQuery + selectQuery2);
 				if(!resultSet.next() ){
 					System.out.println("There are no messages");
 					return false;
