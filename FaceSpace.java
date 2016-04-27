@@ -489,27 +489,27 @@ public class FaceSpace
 				System.out.println(deadline);
 				
 				System.out.println("");
-				String selectQuery = "select fname,lname, t.total "
-								   + "from ( "
-								   		+ "select sender as UserId, (c_sender+c_receiver) as Total "
-								   		+ "from ( "
-								   			+ "select sender,count(sender) as c_sender "
-								   			+ "from messages "
-								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
-								   			+ "group by sender ";
-				String selectQuery2  = ")t1 join ( "
-								   			+ "select receiver,count(receiver) as c_receiver "
-								   			+ "from messages "
-								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
-								   			+ "group by receiver "
-								   		+ ")t2 "
-								   		+ "on t1.sender = t2.receiver "
-								   		+ "order by total desc "
-								   	+ ")t join Profiles "
-								   	+ "on t.userID = profiles.userid "
-								   	+ "where rownum <= " + num;
+				String selectQuery = "select fname,lname,t.total "
+				   + "from ("
+				   		+ "select sender as UserId,(c_sender+c_receiver) as Total "
+				   		+ "from ("
+				   			+ "select sender,count(sender) as c_sender "
+				   			+ "from messages "
+				   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
+				   			+ "group by sender "
+				   		+ ")t1 join ("
+				   			+ "select receiver,count(receiver) as c_receiver "
+				   			+ "from messages "
+				   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
+				   			+ "group by receiver "
+				   		+ ")t2 "
+				   		+ "on t1.sender = t2.receiver "
+				   		+ "order by total desc "
+				   	+ ")t join Profiles "
+				   	+ "on t.userID = profiles.userid "
+				   	+ "where rownum <= " + num;
 			
-				resultSet = statement.executeQuery(selectQuery + selectQuery2);
+				resultSet = statement.executeQuery(selectQuery);
 				if(!resultSet.next() ){
 					System.out.println("There are no messages");
 					return false;
@@ -520,13 +520,13 @@ public class FaceSpace
 				String userLName;
 				int messageCount;
 				
-				System.out.println("Displaying the top" + num + " messengers for the past " + months + " months");
+				System.out.println("Displaying the top " + num + " messengers for the past " + months + " months");
 				do {
 					userFName = resultSet.getString(1);
 					userLName = resultSet.getString(2);
 					messageCount = resultSet.getInt(3);
 				
-					String output = userFName + " " + userLName +"\tTotal Messages Sent or Received: " + messageCount;
+					String output = userFName + " " + userLName +"\t\tTotal Messages Sent or Received: " + messageCount;
 					System.out.println(output+"\n");
 					
 				}
@@ -566,6 +566,9 @@ public class FaceSpace
 	}
 	
 	public boolean threeDegrees( long userA, long userB ){
+		if(userA == -1 || userB == -1){
+			System.out.println("One or both of the users are not in the system");
+		}
 		ArrayList<Long> friendAr1 = friendArray( userA );
 		for( int i = 0; i < friendAr1.size(); i++ ){
 			long friend1 = friendAr1.get( i ).longValue();
@@ -597,11 +600,11 @@ public class FaceSpace
 		return false;
 	}
 	
-	private void printPath( long f1, long f2, long f3, long f4 ){
+	private void printPath( long f1, long f2, long f3, long f4 ){ //f1 is the starting using f2 is the target f3 is the 2nd friend and f4 is the 3rd friend
 		//helper function for threeDegrees. it prints the path using user's names
 		try{
 			System.out.println("The full path is:");
-			long [] ar = {f1,f2,f3,f4};
+			long [] ar = {f1,f2,f3,f4}; 
 			for( int i = 0; i < ar.length; i++ ){
 				if( ar[i] < 0 ){
 					continue;

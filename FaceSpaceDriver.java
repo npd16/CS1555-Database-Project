@@ -249,7 +249,13 @@ public class FaceSpaceDriver{
 	}
 
 	private static void function11(FaceSpace fs, Scanner in){
-		fs.topMessengers(23,5);
+		System.out.println("The top messengers");
+		System.out.println("How many months would you like to go back");
+		int months = in.nextInt();
+		months = in.nextInt();
+		System.out.println("How many people would you like to display");
+		int num = in.nextInt();
+		fs.topMessengers(months,num);
 	}
 	
 	private static void function12(FaceSpace fs, Scanner in){
