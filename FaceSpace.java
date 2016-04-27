@@ -623,6 +623,8 @@ public class FaceSpace
 	//function 12
 	public boolean dropUser( long userID ){
 		try{
+			System.out.println("Trying to delete the use from groups");
+			
 			//decrement the member count in each group the user was part of
 			String selectQuery = "SELECT * FROM GroupMembers WHERE userID="+userID;
 			resultSet = statement.executeQuery(selectQuery);
@@ -645,14 +647,19 @@ public class FaceSpace
 				prepStatement.setLong(2, groups.get(i));
 				prepStatement.executeUpdate();
 			}
+			System.out.println("The user has successfully been removed from all groups");
+			//Everything above works!!!!!!!!!!!
 			//Delete the user
 			query = "DELETE FROM Profiles WHERE Profiles.userID=?";
 			prepStatement = connection.prepareStatement(query);
 			prepStatement.setLong(1, userID); 
 			prepStatement.executeUpdate();
+			System.out.println("The has been deleted from the system");
 			
 			//Delete the user's message if both the sender and receiver are deleted.
 			//first case: user is receiver
+			System.out.println("Trying to delete user's messagers");
+			System.out.println("Checking if messages where user was the receiver are deleteable");
 			selectQuery = "SELECT * FROM Messages WHERE receiver="+userID;
 			resultSet = statement.executeQuery(selectQuery);
 			ArrayList<Long> senders = new ArrayList<Long>();
@@ -670,9 +677,11 @@ public class FaceSpace
 					prepStatement.setLong(1,senders.get(i));
 					prepStatement.setLong(2,userID);
 					prepStatement.executeUpdate();
+					System.out.println("Message Deleted");
 				}
 			}
 			//second case: the user is the sender
+			System.out.println("Checking if messages where user was the sender are deleteable");
 			selectQuery = "SELECT * FROM Messages WHERE sender="+userID;
 			resultSet = statement.executeQuery(selectQuery);
 			ArrayList<Long> receivers = new ArrayList<Long>();
@@ -690,6 +699,7 @@ public class FaceSpace
 					prepStatement.setLong(1,userID);
 					prepStatement.setLong(2,receivers.get(i));
 					prepStatement.executeUpdate();
+					System.out.println("Message Deleted");
 				}
 			}
 			return true;
