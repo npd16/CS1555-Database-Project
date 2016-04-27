@@ -538,4 +538,165 @@ public class FaceSpace
 		}
 		return false;
 	}
+	
+	//Function 10
+	private ArrayList<Long> friendArray( long userID ){
+		//return an arraylist of the userID's of a user's friends
+		ArrayList<Long> ret = new ArrayList<Long>();
+		try{
+			String selectQuery = "SELECT * FROM Friendships WHERE "+
+				"(userId1="+userID+" or userId2="+userID+")";
+			resultSet = statement.executeQuery(selectQuery);
+			while( resultSet.next() ){
+				long u1 = resultSet.getLong(1);
+				long u2 = resultSet.getLong(2);
+				if( u1 != userID ){
+					ret.add( new Long( u1 ) );
+				}
+				else{
+					ret.add(new Long( u2 ) );
+				}
+			}
+			return ret;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error creating an array of friends of a user.  Machine Error: " + Ex.toString());
+		}
+		return ret;
+	}
+	
+	public boolean threeDegrees( long userA, long userB ){
+		ArrayList<Long> friendAr1 = friendArray( userA );
+		for( int i = 0; i < friendAr1.size(); i++ ){
+			long friend1 = friendAr1.get( i ).longValue();
+			if( friend1 == userB ){
+				printPath(userA,friend1,-1,-1);
+				return true;
+			}
+			ArrayList<Long> friendAr2 = friendArray( friend1 );
+			for( int j = 0; j < friendAr2.size(); j++ ){
+				long friend2 = friendAr2.get(j).longValue();
+				if( friend2 == userB ){
+					printPath(userA,friend1,friend2,-1);
+					return true;
+				}
+				ArrayList<Long> friendAr3 = friendArray( friend2 );
+				for( int k = 0; k < friendAr3.size(); k++ ){
+					long friend3 = friendAr3.get(k).longValue();
+					if( friend3 == userB ){
+						printPath(userA,friend1,friend2,friend3);
+						return true;
+					}
+				}
+				//end third degree
+			}
+			//end second degree
+		}
+		//end first degree
+		System.out.println("No path of three degrees or less between the users could be found.");
+		return false;
+	}
+	
+	private void printPath( long f1, long f2, long f3, long f4 ){
+		//helper function for threeDegrees. it prints the path using user's names
+		try{
+			System.out.println("The full path is:");
+			long [] ar = {f1,f2,f3,f4};
+			for( int i = 0; i < ar.length; i++ ){
+				if( ar[i] < 0 ){
+					continue;
+				}
+				String selectQuery = "SELECT * FROM Profiles WHERE userID="+ar[i];
+				resultSet = statement.executeQuery(selectQuery);
+				if( resultSet.next() ){
+					String fName = resultSet.getString(2);
+					String lName = resultSet.getString(3);
+					System.out.println(fName+" "+lName);
+				}
+			}
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error printing the friendship path.  Machine Error: " + Ex.toString());
+		}
+	}
+	
+	//function 12
+	public boolean dropUser( long userID ){
+		try{
+			//decrement the member count in each group the user was part of
+			String selectQuery = "SELECT * FROM GroupMembers WHERE userID="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> groups = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long gID = resultSet.getLong(1);
+				groups.add( new Long( gID ) );
+			}
+			for( int i = 0; i < groups.size(); i++ ){
+				selectQuery = "SELECT * FROM Groups WHERE groupId="+groups.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				long membersCount = 0;
+				if( resultSet.next() ){
+					membersCount = resultSet.getLong(4);
+				}
+				membersCount--;
+				query = "UPDATE Groups SET members = ? WHERE Groups.groupID = ? ";
+				prepStatement = connection.prepareStatement(query);
+				prepStatement.setLong(1, membersCount); 
+				prepStatement.setLong(2, groups.get(i));
+				prepStatement.executeUpdate();
+			}
+			//Delete the user
+			query = "DELETE FROM Profiles WHERE Profiles.userID=?";
+			prepStatement = connection.prepareStatement(query);
+			prepStatement.setLong(1, userID); 
+			prepStatement.executeUpdate();
+			
+			//Delete the user's message if both the sender and receiver are deleted.
+			//first case: user is receiver
+			selectQuery = "SELECT * FROM Messages WHERE receiver="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> senders = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long sID = resultSet.getLong(1);
+				senders.add( new Long( sID ) );
+			}
+			for( int i = 0; i < senders.size(); i++ ){
+				selectQuery = "SELECT * FROM Profiles WHERE userID="+senders.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				if( !resultSet.next() ){
+					//The message must be delete: no sender or receiver(user)
+					query = "DELETE FROM Messages WHERE sender = ? and receiver = ?";
+					prepStatement = connection.prepareStatement(query);
+					prepStatement.setLong(1,senders.get(i));
+					prepStatement.setLong(2,userID);
+					prepStatement.executeUpdate();
+				}
+			}
+			//second case: the user is the sender
+			selectQuery = "SELECT * FROM Messages WHERE sender="+userID;
+			resultSet = statement.executeQuery(selectQuery);
+			ArrayList<Long> receivers = new ArrayList<Long>();
+			while( resultSet.next() ){
+				long rID = resultSet.getLong(1);
+				receivers.add( new Long( rID ) );
+			}
+			for( int i = 0; i < receivers.size(); i++ ){
+				selectQuery = "SELECT * FROM Profiles WHERE userID="+receivers.get(i);
+				resultSet = statement.executeQuery(selectQuery);
+				if( !resultSet.next() ){
+					//The message must be delete: no sender(user) or receiver
+					query = "DELETE FROM Messages WHERE sender = ? and receiver = ?";
+					prepStatement = connection.prepareStatement(query);
+					prepStatement.setLong(1,userID);
+					prepStatement.setLong(2,receivers.get(i));
+					prepStatement.executeUpdate();
+				}
+			}
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error printing the friendship path.  Machine Error: " + Ex.toString());
+		}
+		return false;
+	}
 }
