@@ -471,4 +471,71 @@ public class FaceSpace
 		}
 		return false;
 	}
+	
+	public boolean topMessengers (int months, int num){
+		try{
+				int smallMonths = months % 12;
+				int years = months / 12;
+				String date = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+				int dlYear = Integer.parseInt(date.substring(0,4)) - years; //Getting the current year and subtracting it by however many need to make dead line for top messages
+				int dlMonth = Integer.parseInt(date.substring(5,7)) - smallMonths;//Same with statement above just with months
+				int dlDay = Integer.parseInt(date.substring(8,10));
+				if(dlMonth <= 0){
+					dlMonth += 12;
+					dlYear--;
+				}
+				
+				String deadline = String.format("%04d-%02d-%02d",dlYear,dlMonth,dlDay);
+				System.out.println(deadline);
+				
+				System.out.println("");
+				String selectQuery = "select fname,lname, t.total "
+								   + "from ( "
+								   		+ "select sender as UserId, (c_sender+c_receiver) as Total "
+								   		+ "from ( "
+								   			+ "select sender,count(sender) as c_sender "
+								   			+ "from messages "
+								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
+								   			+ "group by sender "
+								   		+ ")t1 join ( "
+								   			+ "select receiver,count(receiver) as c_receiver "
+								   			+ "from messages "
+								   			+ "where sent_date between to_date('"+deadline+"','YYYY-MM-DD') and to_date('"+date+"','YYYY-MM-DD') "
+								   			+ "group by receiver "
+								   		+ ")t2 "
+								   		+ "on t1.sender = t2.receiver "
+								   		+ "order by total desc "
+								   	+ ")t join Profiles "
+								   	+ "on t.userID = profiles.userid "
+								   	+ "where rownum <= " + num;
+			
+				resultSet = statement.executeQuery(selectQuery);
+				if(!resultSet.next() ){
+					System.out.println("There are no messages");
+					return false;
+				}
+				resultSet.first();
+				
+				String userFName;
+				String userLName;
+				int messageCount;
+				
+				System.out.println("Displaying the top" + num + " messengers for the past " + months + " months");
+				do {
+					userFName = resultSet.getString(1);
+					userLName = resultSet.getString(2);
+					messageCount = resultSet.getInt(3);
+				
+					String output = userFName + " " + userLName +"\tTotal Messages Sent or Received: " + messageCount;
+					System.out.println(output+"\n");
+					
+				}
+				while(resultSet.next());
+			return true;
+		}
+		catch(SQLException Ex) {
+			System.out.println("Error displaying top messengers.  Machine Error: " + Ex.toString());
+		}
+		return false;
+	}
 }

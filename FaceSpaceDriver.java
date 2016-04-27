@@ -236,7 +236,7 @@ public class FaceSpaceDriver{
 	}
 
 	private static void function11(FaceSpace fs, Scanner in){
-		//TODO
+		fs.topMessengers(23,5);
 	}
 	
 	private static void function12(FaceSpace fs, Scanner in){
