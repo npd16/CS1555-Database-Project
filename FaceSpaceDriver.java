@@ -205,6 +205,9 @@ public class FaceSpaceDriver{
 		
 			fs.sendMessageToUser( subject, body, recID, sendID );
 		}
+		else{
+			System.out.println("One or both of the users do not exist. \nCan not send a message.");
+		}
 	}
 	
 	private static void function8(FaceSpace fs, Scanner in){
@@ -276,16 +279,28 @@ public class FaceSpaceDriver{
 		System.out.println("\nCreating Users");
 		fs.createUser( "Peter","Schaldenbrand","pls21@pitt.edu","1995-07-16");
 		fs.createUser( "Nick","DeFranco","npd16@pitt.edu","1994-06-14");
+		fs.createUser("Bryce","Gerboc","bag51@pitt.edu","1993-03-27");
+		fs.createUser("Nick","Carone","njc39@pitt.edu","1991-08-20");
+		fs.createUser("Will","Ferrell","wferrell@gmail.com","1967-08-16");
 		
 		//Test initiateFriendship
 		System.out.println("\nInitiating Friendships");
 		long u1 = fs.getUserID("Peter","Schaldenbrand");
 		long u2 = fs.getUserID("Nick","DeFranco");
+		long u3 = getUserID("Bryce","Gerboc");
+		long u4 = getUserID("Nick","Carone");
+		long u5 = getUserID("Will","Ferrell");
 		fs.initiateFriendship( u1, u2 );
+		fs.initiateFriendship(u2,u3);
+		fs.initiateFriendship(u3,u4);
+		fs.initiateFriendship(u4,u5);
 		
 		//Test establishFriendship
 		System.out.println("\nEstablishing Friendships");
-		fs.establishFriendship( u1, u2 );
+		fs.establishFriendship(u1,u2);
+		fs.establishFriendship(u2,u3);
+		fs.establishFriendship(u3,u4);
+		fs.establishFriendship(u4,u5);
 		
 		//Test displayFriends
 		System.out.println("\nDisplaying Friends");
@@ -314,6 +329,22 @@ public class FaceSpaceDriver{
 		System.out.println("\nSearching for npd, chald, hello.");
 		System.out.println("npd is in Nick DeFranco's email, chald is part of Schaldenbrand, hello is not found any where");
 		fs.searchForUser("npd chald hello");
+		
+		//Test threeDegrees
+		System.out.println("\nLooking at three degrees of friendships");
+		System.out.println("Peter to Nick D");
+		fs.threeDegrees(u1,u2);
+		System.out.println("Peter to Bryce");
+		fs.threeDegrees(u1,u3);
+		System.out.println("Peter to Nick C");
+		fs.threeDegrees(u1,u4);
+		System.out.prinlnt("Peter to Will");
+		fs.threeDegrees(u1,u5);
+		
+		//Test topMessengers
+		System.out.prinlnt("\nLooking at the top 10 messengers within the past 12 months");
+		fs.topMessengers(24,10);
+		
 		
 	}
 
