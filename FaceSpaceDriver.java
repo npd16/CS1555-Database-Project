@@ -290,10 +290,14 @@ public class FaceSpaceDriver{
 		long u3 = fs.getUserID("Bryce","Gerboc");
 		long u4 = fs.getUserID("Nick","Carone");
 		long u5 = fs.getUserID("Will","Ferrell");
-		fs.initiateFriendship( u1, u2 );
+		fs.initiateFriendship(u1,u2);
 		fs.initiateFriendship(u2,u3);
 		fs.initiateFriendship(u3,u4);
 		fs.initiateFriendship(u4,u5);
+		System.out.println("Trying to send a friendship to yourself");
+		fs.initiateFriendship(u3,u3);
+		System.out.println("Trying to send another request to Peter and Nick D.");
+		fs.initiateFriendship(u1,u2);
 		
 		//Test establishFriendship
 		System.out.println("\nEstablishing Friendships");
@@ -301,6 +305,8 @@ public class FaceSpaceDriver{
 		fs.establishFriendship(u2,u3);
 		fs.establishFriendship(u3,u4);
 		fs.establishFriendship(u4,u5);
+		System.out.println("Trying to establish a friendship that does not exist.");
+		fs.establishFriendship(u3,u5);
 		
 		//Test displayFriends
 		System.out.println("\nDisplaying Friends");
@@ -308,13 +314,20 @@ public class FaceSpaceDriver{
 		
 		//Test createGroup
 		System.out.println("\nCreating Group");
-		fs.createGroup("Fan of Green Lantern","We think Green Lantern is the best superhero!",1000);
+		fs.createGroup("Fan of Green Lantern","We think Green Lantern is the best superhero!",100);
 		
 		//Test addToGroup
 		System.out.println("\nAdding to a group");
 		long gId = fs.getGroupID("Fan of Green Lantern");
 		fs.addToGroup(u1, gId);
 		fs.addToGroup(u2, gId);
+		System.out.println("The current group member number is 2. The limit is 100");
+		System.out.println("Adding 98 members");
+		for(int i = 1; i <= 98; i++){
+			fs.addToGroup(i,gId);
+		}
+		System.out.println("Should be 100 users. Trying to add one more");
+		fs.addToGroup(u3,gId);
 		
 		//Test sendMessageToUser
 		System.out.println("\nSend a message to a user");

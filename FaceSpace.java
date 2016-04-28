@@ -41,6 +41,7 @@ public class FaceSpace
 		catch(Exception Ex)  {
 			System.out.println("Error connecting to database.  Machine Error: " +
 					Ex.toString());
+			System.exit(0);
 		}
 	}
 	
@@ -109,6 +110,12 @@ public class FaceSpace
 		
 	public boolean initiateFriendship( long user1_id, long user2_id ){
 		try{
+			
+			if(user1_id == user2_id){
+				System.out.println("You can not be friends with yourself");
+				return false;
+			}	
+				
 			//Make sure that the users already have profiles
 			String selectQuery = "SELECT * FROM  Profiles WHERE userID = "+user1_id;
 			resultSet = statement.executeQuery(selectQuery);
@@ -121,6 +128,13 @@ public class FaceSpace
 			if (!resultSet.next()) {
 				System.out.println("user2 does not exist");
 				return false;	//the profile doesn't exits
+			}
+			
+			selectQuery = "SELECT * FROM Friendships WHERE (userID1="+user1_id+" and userId2="+user2_id+") or (userID1="+user2_id+" and userId2="+user1_id+")";
+			resultSet = statement.executeQuery(selectQuery);
+			if(resultSet.next()) {
+				System.out.println("This friendship already is pending or established");
+				return false;	//friendship already exists
 			}
 			
 			//insert into friendships
@@ -152,6 +166,11 @@ public class FaceSpace
 	}
 	public boolean establishFriendship( long user1, long user2 ){
 		try{
+		
+			if(user1 == user2){
+				System.out.println("You can not be friends with yourself");
+				return false;
+			}
 			//Make sure that the users already have profiles
 			String selectQuery = "SELECT * FROM  Profiles WHERE userID = "+user1;
 			resultSet = statement.executeQuery(selectQuery);
