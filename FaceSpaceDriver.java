@@ -255,7 +255,7 @@ public class FaceSpaceDriver{
 		System.out.println("The top messengers");
 		System.out.println("How many months would you like to go back");
 		int months = in.nextInt();
-		months = in.nextInt();
+		
 		System.out.println("How many people would you like to display");
 		int num = in.nextInt();
 		fs.topMessengers(months,num);
@@ -332,17 +332,17 @@ public class FaceSpaceDriver{
 		
 		//Test threeDegrees
 		System.out.println("\nLooking at three degrees of friendships");
-		System.out.println("Peter to Nick D");
+		System.out.println("\nPeter to Nick D");
 		fs.threeDegrees(u1,u2);
-		System.out.println("Peter to Bryce");
+		System.out.println("\nPeter to Bryce");
 		fs.threeDegrees(u1,u3);
-		System.out.println("Peter to Nick C");
+		System.out.println("\nPeter to Nick C");
 		fs.threeDegrees(u1,u4);
-		System.out.println("Peter to Will");
+		System.out.println("\nPeter to Will");
 		fs.threeDegrees(u1,u5);
 		
 		//Test topMessengers
-		System.out.println("\nLooking at the top 10 messengers within the past 12 months");
+		System.out.println("\nLooking at the top 10 messengers within the past 24 months");
 		fs.topMessengers(24,10);
 		
 		

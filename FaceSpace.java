@@ -486,7 +486,6 @@ public class FaceSpace
 				}
 				
 				String deadline = String.format("%04d-%02d-%02d",dlYear,dlMonth,dlDay);
-				System.out.println(deadline);
 				
 				System.out.println("");
 				String selectQuery = "select fname,lname,t.total "
