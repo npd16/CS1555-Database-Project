@@ -287,9 +287,9 @@ public class FaceSpaceDriver{
 		System.out.println("\nInitiating Friendships");
 		long u1 = fs.getUserID("Peter","Schaldenbrand");
 		long u2 = fs.getUserID("Nick","DeFranco");
-		long u3 = getUserID("Bryce","Gerboc");
-		long u4 = getUserID("Nick","Carone");
-		long u5 = getUserID("Will","Ferrell");
+		long u3 = fs.getUserID("Bryce","Gerboc");
+		long u4 = fs.getUserID("Nick","Carone");
+		long u5 = fs.getUserID("Will","Ferrell");
 		fs.initiateFriendship( u1, u2 );
 		fs.initiateFriendship(u2,u3);
 		fs.initiateFriendship(u3,u4);
@@ -338,11 +338,11 @@ public class FaceSpaceDriver{
 		fs.threeDegrees(u1,u3);
 		System.out.println("Peter to Nick C");
 		fs.threeDegrees(u1,u4);
-		System.out.prinlnt("Peter to Will");
+		System.out.println("Peter to Will");
 		fs.threeDegrees(u1,u5);
 		
 		//Test topMessengers
-		System.out.prinlnt("\nLooking at the top 10 messengers within the past 12 months");
+		System.out.println("\nLooking at the top 10 messengers within the past 12 months");
 		fs.topMessengers(24,10);
 		
 		

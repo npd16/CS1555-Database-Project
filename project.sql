@@ -23,8 +23,8 @@ CREATE TABLE Friendships
 	status	number(1),
 	date_sent	DATE,
 	CONSTRAINT Friendships_PK PRIMARY KEY (userId1,userId2),
-	CONSTRAINT Friendships_FK_Profiles1 FOREIGN KEY (userId1) REFERENCES Profiles(userID),
-	CONSTRAINT Friendships_FK_Profiles2 FOREIGN KEY (userId2) REFERENCES Profiles(userID),
+	CONSTRAINT Friendships_FK_Profiles1 FOREIGN KEY (userId1) REFERENCES Profiles(userID) on delete cascade,
+	CONSTRAINT Friendships_FK_Profiles2 FOREIGN KEY (userId2) REFERENCES Profiles(userID) on delete cascade,
 	CONSTRAINT Check_SameUser CHECK (userId1 != userId2)
 );
 --Status: 0 = pending, 1 = established
@@ -41,8 +41,9 @@ CREATE TABLE Groups
 CREATE TABLE GroupMembers
 (	groupId	number(10),
 	userId	number(10),
-	CONSTRAINT GroupMembers_FK_Groups FOREIGN KEY (groupId) REFERENCES Groups(groupId),
-	CONSTRAINT GroupMembers_FK_Profiles FOREIGN KEY (userId) REFERENCES Profiles(userID)
+	CONSTRAINT GroupMembers_FK_Groups FOREIGN KEY (groupId) REFERENCES Groups(groupId) 
+	on delete cascade,
+	CONSTRAINT GroupMembers_FK_Profiles FOREIGN KEY (userId) REFERENCES Profiles(userID) on delete cascade
 );
 
 CREATE TABLE Messages
@@ -52,31 +53,11 @@ CREATE TABLE Messages
 	subject	varchar2(32),
 	body	varchar2(100),
 	sent_date	TIMESTAMP,
-	CONSTRAINT Messages_FK_ProfilesS FOREIGN KEY (sender) REFERENCES Profiles(userID),
-	CONSTRAINT Messages_FK_ProfilesR FOREIGN KEY (receiver) REFERENCES Profiles(userID)
+	CONSTRAINT Messages_FK_ProfilesS FOREIGN KEY (sender) REFERENCES Profiles(userID) on delete cascade,
+	CONSTRAINT Messages_FK_ProfilesR FOREIGN KEY (receiver) REFERENCES Profiles(userID) on delete cascade
 );
 
-CREATE OR REPLACE TRIGGER remove_from_group
-AFTER DELETE ON Profiles
-FOR EACH ROW
-BEGIN
-	--UPDATE Groups
-	--SET Groups.members = (Groups.members - 1)
-	--WHERE Groups.groupId in (	SELECT * FROM GroupMembers WHERE GroupMembers.userID = :old.userID);
-	DELETE FROM GroupMembers
-	WHERE GroupMembers.userID = :old.userID;
-END;
-/
 
-CREATE OR REPLACE TRIGGER end_friendship
-AFTER DELETE ON Profiles
-FOR EACH ROW
-BEGIN
-	DELETE FROM Friendships
-	WHERE ((Friendships.userID1 = :old.userID) or 
-			(Friendships.userID2 = :old.userID));
-END;
-/
 
 INSERT INTO Profiles VALUES(1, 'Ada', 'Lovelace', 'ada1@gmail.com', TO_DATE('1990-01-03','YYYY-MM-DD'),  TIMESTAMP '2016-03-29 14:24:51');
 INSERT INTO Profiles VALUES(2, 'Na', 'Li','na2@gmail.com', TO_DATE('1993-08-21','YYYY-MM-DD'), TIMESTAMP '2016-04-13 05:21:02');
@@ -792,4 +773,3 @@ INSERT INTO Messages VALUES(297, 13, 89, 'mipfmgmlrrrfukagnvpxacmkr' , 'coxrmhuw
 INSERT INTO Messages VALUES(298, 22, 28, 'iwowejgesbxtfihgrtjjpkt' , 'vlqtiropjsokbpmgsecpupfqjfdxoqidonmw' , TIMESTAMP '2016-02-01 13:43:45');
 INSERT INTO Messages VALUES(299, 48, 58, 'fgknutkrucwwrvibdujwisiojuh' , 'oqtsgsoqibcrhidlfikbpckmbdbsobfvvsahtljrswattvwfnkhujrnrrfclvxjnkgksqqie' , TIMESTAMP '2015-05-02 13:34:11');
 INSERT INTO Messages VALUES(300, 28, 60, 'dpnmwkweaemdrr' , 'aggakaeqvignfcpgxtvpqbtlmvsnapwtmphaqtguhcilrlxxkttcijxmkqavdbrpwb' , TIMESTAMP '2016-07-08 16:13:16');
-
