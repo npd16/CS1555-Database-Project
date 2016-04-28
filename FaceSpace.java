@@ -110,6 +110,11 @@ public class FaceSpace
 		
 	public boolean initiateFriendship( long user1_id, long user2_id ){
 		try{
+		
+			if(user1_id == -1 || user2_id == -1){
+				System.out.println("One or both of the users do not exist");
+				return false;	
+			}
 			
 			if(user1_id == user2_id){
 				System.out.println("You can not be friends with yourself");
@@ -166,6 +171,11 @@ public class FaceSpace
 	}
 	public boolean establishFriendship( long user1, long user2 ){
 		try{
+		
+			if(user1 == -1 || user2 == -1){
+				System.out.println("One or both of the users do not exist");
+				return false;	
+			}
 		
 			if(user1 == user2){
 				System.out.println("You can not be friends with yourself");
@@ -345,6 +355,16 @@ public class FaceSpace
 	
 	public boolean addToGroup ( long userID, long groupID ){
 		try{
+			if(userID == -1){
+				System.out.println("The user does not exist");
+				return false;	
+			}
+			
+			if(groupID == -1){
+				System.out.println("The Group does not exist");
+				return false;	
+			}
+			
 			//check to see if the group member limit is not reached
 			query = "select members,memlimit from Groups where groupID = "+groupID;
 			resultSet = statement.executeQuery( query );
@@ -383,7 +403,8 @@ public class FaceSpace
 	}
 	
 	public boolean sendMessageToUser( String sub, String body, long recipient, long sender){
-		try{	
+		try{
+				
 			query = "insert into Messages values (?,?,?,?,?,?)";
 			prepStatement = connection.prepareStatement(query);
 			
@@ -586,6 +607,7 @@ public class FaceSpace
 	public boolean threeDegrees( long userA, long userB ){
 		if(userA == -1 || userB == -1){
 			System.out.println("One or both of the users are not in the system");
+			return false;
 		}
 		ArrayList<Long> friendAr1 = friendArray( userA );
 		for( int i = 0; i < friendAr1.size(); i++ ){
@@ -644,6 +666,10 @@ public class FaceSpace
 	//function 12
 	public boolean dropUser( long userID ){
 		try{
+			if(userID == -1){
+				System.out.println("User does not exist");
+				return false;
+			}
 			System.out.println("Trying to delete the use from groups");
 			
 			//decrement the member count in each group the user was part of

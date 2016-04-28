@@ -160,7 +160,12 @@ public class FaceSpaceDriver{
 		if(in.hasNextInt()){
 			limit = in.nextInt();
 		}
-		fs.createGroup(gname,desc,limit);
+		if(limit < 10000 && limit > 0){
+			fs.createGroup(gname,desc,limit);
+		}
+		else{
+			System.out.println("Please enter a member limit from 1-9999");
+		}
 	}
 	
 	private static void function6(FaceSpace fs, Scanner in){
@@ -202,8 +207,14 @@ public class FaceSpaceDriver{
 			String subject = in.nextLine();
 			System.out.println("Please enter the message's body:");
 			String body = in.nextLine();
-		
-			fs.sendMessageToUser( subject, body, recID, sendID );
+			
+			
+			if(subject.length() <= 32 && body.length() <= 100){
+				fs.sendMessageToUser( subject, body, recID, sendID );
+			}
+			else{
+				System.out.println("The subject can only be 32 characters.\nThe body can only be 100 characters");
+			}
 		}
 		else{
 			System.out.println("One or both of the users do not exist. \nCan not send a message.");
@@ -222,6 +233,9 @@ public class FaceSpaceDriver{
 		
 		if(userID != -1){
 			fs.displayMessages( userID );
+		}
+		else{
+			System.out.println("The user does not exist");
 		}
 	}
 	
@@ -258,7 +272,12 @@ public class FaceSpaceDriver{
 		
 		System.out.println("How many people would you like to display");
 		int num = in.nextInt();
-		fs.topMessengers(months,num);
+		if(months > 0 && num > 0){
+			fs.topMessengers(months,num);
+		}
+		else{
+			System.out.println("Months and num cannot be 0");
+		}
 	}
 	
 	private static void function12(FaceSpace fs, Scanner in){
@@ -270,7 +289,6 @@ public class FaceSpaceDriver{
 		String lname = in.nextLine();
 		
 		long u = fs.getUserID(fname,lname);
-		
 		fs.dropUser( u );
 	}
 	
@@ -358,6 +376,13 @@ public class FaceSpaceDriver{
 		System.out.println("\nLooking at the top 10 messengers within the past 24 months");
 		fs.topMessengers(24,10);
 		
+		//Test dropUser
+		System.out.println("\nDropping user 'Bryce Gerboc'");
+		fs.dropUser(u3);
+		System.out.println("Checking 'Nick D.' 's friends for Bryce");
+		fs.displayFriends("Nick","DeFranco");
+		System.out.println("Check Peter and Nick C. connection");
+		fs.threeDegrees(u1,u4);
 		
 	}
 
